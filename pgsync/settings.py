@@ -153,6 +153,10 @@ REDIS_SCHEME = env.str("REDIS_SCHEME", default="redis")
 REDIS_SOCKET_TIMEOUT = env.int("REDIS_SOCKET_TIMEOUT", default=5)
 # number of items to write to Redis at a time
 REDIS_WRITE_CHUNK_SIZE = env.int("REDIS_WRITE_CHUNK_SIZE", default=1000)
+# if redis should use SSL connection
+REDIS_SSL = env.bool("REDIS_SSL", False)
+# redis ca-certs
+REDIS_CA_CERTS = env.str("REDIS_CA_CERTS", "")
 
 
 # Logging:

@@ -6,7 +6,7 @@ from typing import List, Optional
 from redis import Redis
 from redis.exceptions import ConnectionError
 
-from .settings import REDIS_READ_CHUNK_SIZE, REDIS_SOCKET_TIMEOUT
+from .settings import REDIS_READ_CHUNK_SIZE, REDIS_SOCKET_TIMEOUT, REDIS_SSL, REDIS_CA_CERTS
 from .urls import get_redis_url
 
 logger = logging.getLogger(__name__)
@@ -23,6 +23,8 @@ class RedisQueue(object):
             self.__db: Redis = Redis.from_url(
                 url,
                 socket_timeout=REDIS_SOCKET_TIMEOUT,
+                ssl=REDIS_SSL,
+                ssl_ca_certs=REDIS_CA_CERTS
             )
             self.__db.ping()
         except ConnectionError as e:
