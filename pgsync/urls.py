@@ -73,3 +73,4 @@ def get_postgres_url(
         )
     logger.debug("Connecting to Postgres without password.")
     return f"postgresql+{driver}://{user}@{host}:{port}/{database}"
+

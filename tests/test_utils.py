@@ -9,7 +9,7 @@ from mock import call, patch
 
 from pgsync.base import Base
 from pgsync.exc import SchemaError
-from pgsync.urls import get_postgres_url, get_redis_url, get_search_url
+from pgsync.urls import get_postgres_url, get_search_url
 from pgsync.utils import (
     compiled_query,
     config_loader,
@@ -72,8 +72,6 @@ class TestUtils(object):
             call("URL: {get_postgres_url}"),
             call("\x1b[4mSearch\x1b[0m:"),
             call(f"URL: {get_search_url()}"),
-            call("\x1b[4mRedis\x1b[0m:"),
-            call(f"URL: {get_redis_url}"),
         ]
         assert mock_logger.info.call_args_list[0] == calls[0]
         assert mock_logger.info.call_args_list[1] == calls[1]
