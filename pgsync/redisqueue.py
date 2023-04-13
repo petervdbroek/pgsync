@@ -6,8 +6,16 @@ from typing import List, Optional
 from redis import Redis
 from redis.exceptions import ConnectionError
 
-from .settings import REDIS_READ_CHUNK_SIZE, REDIS_SOCKET_TIMEOUT, REDIS_SSL, REDIS_CA_CERTS
-from .urls import get_redis_url
+from .settings import (
+    REDIS_READ_CHUNK_SIZE,
+    REDIS_SOCKET_TIMEOUT,
+    REDIS_SSL,
+    REDIS_CA_CERTS,
+    REDIS_AUTH,
+    REDIS_DB,
+    REDIS_HOST,
+    REDIS_PORT,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -17,14 +25,16 @@ class RedisQueue(object):
 
     def __init__(self, name: str, namespace: str = "queue", **kwargs):
         """Init Simple Queue with Redis Backend."""
-        url: str = get_redis_url(**kwargs)
         self.key: str = f"{namespace}:{name}"
         try:
-            self.__db: Redis = Redis.from_url(
-                url,
-                socket_timeout=REDIS_SOCKET_TIMEOUT,
+            self.__db: Redis = Redis(
+                host=REDIS_HOST,
+                port=REDIS_PORT,
+                password=REDIS_AUTH,
+                db=REDIS_DB,
                 ssl=REDIS_SSL,
-                ssl_ca_certs=REDIS_CA_CERTS
+                ssl_ca_certs=REDIS_CA_CERTS,
+                socket_timeout=REDIS_SOCKET_TIMEOUT
             )
             self.__db.ping()
         except ConnectionError as e:

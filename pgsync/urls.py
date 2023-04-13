@@ -16,11 +16,6 @@ from .settings import (
     PG_PASSWORD,
     PG_PORT,
     PG_USER,
-    REDIS_AUTH,
-    REDIS_DB,
-    REDIS_HOST,
-    REDIS_PORT,
-    REDIS_SCHEME,
 )
 
 logger = logging.getLogger(__name__)
@@ -78,22 +73,3 @@ def get_postgres_url(
         )
     logger.debug("Connecting to Postgres without password.")
     return f"postgresql+{driver}://{user}@{host}:{port}/{database}"
-
-
-def get_redis_url(
-    scheme: Optional[str] = None,
-    host: Optional[str] = None,
-    password: Optional[str] = None,
-    port: Optional[int] = None,
-    db: Optional[str] = None,
-) -> str:
-    """Return the URL to connect to Redis."""
-    host = host or REDIS_HOST
-    password = _get_auth("REDIS_AUTH") or password or REDIS_AUTH
-    port = port or REDIS_PORT
-    db = db or REDIS_DB
-    scheme = scheme or REDIS_SCHEME
-    if password:
-        return f"{scheme}://:{quote_plus(password)}@{host}:{port}/{db}"
-    logger.debug("Connecting to Redis without password.")
-    return f"{scheme}://{host}:{port}/{db}"
