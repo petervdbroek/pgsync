@@ -6,6 +6,17 @@ from pgsync.base import _pg_engine
 from pgsync.redisqueue import RedisQueue
 
 
+def test_redis_url(mocker):
+    """Test the redis url is configured."""
+    mock_get_redis_url = mocker.patch(
+        "pgsync.redisqueue.get_redis_url",
+        return_value="redis://kermit:frog@some-host:6379/0",
+    )
+    mocker.patch("redis.Redis.ping", return_value=True)
+    mocker.patch("logging.config.dictConfig")
+    RedisQueue("something")
+    mock_get_redis_url.assert_called_once()
+
 
 def test_postgres_url(mocker):
     """Test the postgres url is configured."""

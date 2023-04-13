@@ -8,6 +8,40 @@ from pgsync.redisqueue import RedisQueue
 
 
 class TestRedisQueue(object):
+    """Redis Queue tests."""
+
+    @patch("pgsync.redisqueue.logger")
+    def test_redis_conn(self, mock_logger, mocker):
+        """Test the redis constructor."""
+        mock_get_redis_url = mocker.patch(
+            "pgsync.redisqueue.get_redis_url",
+            return_value="redis://kermit:frog@some-host:6379/0",
+        )
+        mock_ping = mocker.patch("redis.Redis.ping", return_value=True)
+        queue = RedisQueue("something", namespace="foo")
+        assert queue.key == "foo:something"
+        mock_get_redis_url.assert_called_once()
+        mock_ping.assert_called_once()
+        mock_logger.exception.assert_not_called()
+
+    @patch("pgsync.redisqueue.logger")
+    def test_redis_conn_fail(self, mock_logger, mocker):
+        """Test the redis constructor fails."""
+        mock_get_redis_url = mocker.patch(
+            "pgsync.redisqueue.get_redis_url",
+            return_value="redis://kermit:frog@some-host:6379/0",
+        )
+        mock_ping = mocker.patch(
+            "redis.Redis.ping", side_effect=ConnectionError("pong")
+        )
+        with pytest.raises(ConnectionError):
+            RedisQueue("something", namespace="foo")
+        mock_get_redis_url.assert_called_once()
+        mock_ping.assert_called_once()
+        mock_logger.exception.assert_called_once_with(
+            "Redis server is not running: pong"
+        )
+
     def test_qsize(self, mocker):
         """Test the redis qsize."""
         queue = RedisQueue("something")

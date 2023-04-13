@@ -7,6 +7,7 @@ from pgsync.settings import ELASTICSEARCH_PORT
 from pgsync.urls import (
     _get_auth,
     get_postgres_url,
+    get_redis_url,
     get_search_url,
 )
 from pgsync.utils import get_config
@@ -57,6 +58,21 @@ class TestUrls(object):
         #     mock_logger.debug.assert_called_once_with(
         #         "Connecting to Postgres without password."
         #     )
+
+    @patch("pgsync.urls.logger")
+    def test_get_redis_url(self, mock_logger):
+        assert get_redis_url() == "redis://localhost:6379/0"
+        mock_logger.debug.assert_called_with(
+            "Connecting to Redis without password."
+        )
+        assert (
+            get_redis_url(
+                password="1234",
+                port=9999,
+            )
+            == "redis://:1234@localhost:9999/0"
+        )
+        assert get_redis_url(host="skynet") == "redis://skynet:6379/0"
 
     @patch("pgsync.urls.logger")
     def test_get_config(self, mock_logger):
