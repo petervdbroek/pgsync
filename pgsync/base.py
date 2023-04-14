@@ -29,6 +29,7 @@ from .settings import (
     PG_SSLROOTCERT,
     QUERY_CHUNK_SIZE,
     STREAM_RESULTS,
+    PG_SCHEMAS
 )
 from .trigger import CREATE_TRIGGER_TEMPLATE
 from .urls import get_postgres_url
@@ -250,7 +251,10 @@ class Base(object):
     def schemas(self) -> dict:
         """Get the database schema names."""
         if self.__schemas is None:
-            self.__schemas = sa.inspect(self.engine).get_schema_names()
+            schemas = sa.inspect(self.engine).get_schema_names()
+            for schema in schemas:
+                if schema in PG_SCHEMAS:
+                    self.__schemas.add(schema)
             for schema in BUILTIN_SCHEMAS:
                 if schema in self.__schemas:
                     self.__schemas.remove(schema)
