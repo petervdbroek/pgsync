@@ -99,7 +99,8 @@ def get_redis_url(
     ssl_ca_certs = ssl_ca_certs or REDIS_CA_CERTS
     query_string = ""
     if ssl:
-        query_string = f"?ssl=True&ssl_ca_certs={ssl_ca_certs}"
+        query_string = f"?ssl_ca_certs={ssl_ca_certs}"
+        scheme = 'rediss'
     if password:
         return f"{scheme}://:{quote_plus(password)}@{host}:{port}/{db}{query_string}"
     logger.debug("Connecting to Redis without password.")
