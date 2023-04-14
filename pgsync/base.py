@@ -251,10 +251,11 @@ class Base(object):
     def schemas(self) -> dict:
         """Get the database schema names."""
         if self.__schemas is None:
+            self.__schemas = []
             schemas = sa.inspect(self.engine).get_schema_names()
             for schema in schemas:
                 if schema in PG_SCHEMAS:
-                    self.__schemas.add(schema)
+                    self.__schemas.append(schema)
             for schema in BUILTIN_SCHEMAS:
                 if schema in self.__schemas:
                     self.__schemas.remove(schema)
